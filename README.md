@@ -1,5 +1,5 @@
 # go_proxy
-go_proxy是一个http\https简单的正向代理，最终以二进制可执行程序运行，跨平台
+go_proxy是一个http\https代理工具
 
 ## 构建
 1. 源码构建，进入项目目录
@@ -11,33 +11,65 @@ go build .
 go install github.com/Li-giegie/go_proxy@latest
 
 ## 使用
-go_proxy -h
+本代理分为两种模式： 转发模式、隧道模式，转发模式下从发送方到转发服务器为明文传输，如果访问外网可能被防火墙拦截，进而无法正常使用；
+隧道模式发出的请求先进入隧道入口经过加密在传输到隧道服务端处理，这段数据是加密过的很大程度上防火墙不会拦截。
+
 ```go
-http/https Forward Proxy
+go_proxy -h
+http/s proxy server
 
 Usage:
-go_proxy [flags]
+go_proxy [command]
+
+Available Commands:
+completion  Generate the autocompletion script for the specified shell
+help        Help about any command
+server      http/s proxy server (no tunnels)
+tlsclient   http/s proxy tls tunnel client
+tlsserver   http/s proxy tls tunnel server
+version     version
+xorclient   http/s proxy XOR encryption tunnel client
+xorserver   http/s proxy XOR encryption tunnel server
 
 Flags:
--a, --addr string            listen address (default ":1080")
--h, --help                   help for go_proxy
--s, --logfilecachesize int   If the mode is Output to File, write to the buffer first, and enable the feature if the buffer size is greater than 16
--l, --loglevel uint32        log level: [0~6] (default 4)
--m, --logmode string         log out mode: [null|stdout|$filename] (default "null")
--n, --maxconnnum int         max connection number (default 100)
+-h, --help   help for go_proxy
 ```
-### 示例
-1) ./go_proxy：启动默认配置的正向代理服务不输出日志
-2) ./go_proxy -m run.log -s 4096 -l 6：输出日志到run.log文件中，缓冲区大小为4096，日志等级为6 (trace)
-3) ./go_proxy -n 10：服务器最大接受10个连接
-
-### http/s 加密隧道代理
-代理的地址是隧道客户端
+### 转发模式
+```
+请求 <---> proxyserver <---> 目的服务端
+```
+启动服务
+```
+go_proxy server -addr :1080
+```
+### 隧道模式
 ```
 请求 <--> proxyclient <--> proxyserver <--> 目的服务端
 ```
-双向证书认证
+代理入口为隧道入口 (隧道客户端)
+#### 1.TLS
+使用tls隧道双向认证
+1. 启动proxy服务端
+```
+go_proxy tlsserver --addr :1080 --pem ./pem/server.pem --key ./pem/server.key --cpem ./pem/client.pem
+```
+2. 启动proxy客户端
+```
+go_proxy tlsclient --addr :1080 --proxy :2080 --pem ./pem/client.pem --key ./pem/client.key
+```
+#### 2.秘钥
+使用秘钥加密隧道
+1. 启动隧道服务端
+```
+go_proxy xorserver --addr :1080 --key a1!3&*dhiuSDHASd
+```
+2. 启动隧道客户端
+```
+go_proxy xorclient --addr :2080 --key a1!3&*dhiuSDHASd --proxy :1080
+```
+
 #### 生成证书
+可使用Openssl工具生成证书
 ```
 1、 生成服务器端的私钥
 openssl genrsa -out server.key 2048
@@ -47,13 +79,4 @@ openssl req -new -x509 -key server.key -out server.pem -days 3650
 openssl genrsa -out client.key 2048
 4、 生成客户端的证书
 openssl req -new -x509 -key client.key -out client.pem -days 3650
-```
-
-#### 启动proxy服务端
-```
-go_proxy proxyserver --listen :1080 --pem ./pem/server.pem --key ./pem/server.key --clientpem ./pem/client.pem
-```
-#### 启动proxy客户端
-```
-go_proxy proxyclient -l :1080 --proxy :2080 --pem ./pem/client.pem --key ./pem/client.key
 ```
