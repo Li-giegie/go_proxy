@@ -23,8 +23,8 @@ import (
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:   "go_proxy",
-	Short: "http/https正向代理",
-	Long:  `http/https Forward Proxy`,
+	Short: "http/s proxy server",
+	Long:  `http/s proxy server`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		addr, _ := cmd.Flags().GetString("addr")
 		level, _ := cmd.Flags().GetUint32("loglevel")

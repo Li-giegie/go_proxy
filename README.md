@@ -31,4 +31,29 @@ Flags:
 2) ./go_proxy -m run.log -s 4096 -l 6：输出日志到run.log文件中，缓冲区大小为4096，日志等级为6 (trace)
 3) ./go_proxy -n 10：服务器最大接受10个连接
 
+### http/s 加密隧道代理
+代理的地址是隧道客户端
+```
+请求 <--> proxyclient <--> proxyserver <--> 目的服务端
+```
+双向证书认证
+#### 生成证书
+```
+1、 生成服务器端的私钥
+openssl genrsa -out server.key 2048
+2、 生成服务器端证书
+openssl req -new -x509 -key server.key -out server.pem -days 3650
+3、 生成客户端的私钥
+openssl genrsa -out client.key 2048
+4、 生成客户端的证书
+openssl req -new -x509 -key client.key -out client.pem -days 3650
+```
 
+#### 启动proxy服务端
+```
+go_proxy proxyserver --listen :1080 --pem ./pem/server.pem --key ./pem/server.key --clientpem ./pem/client.pem
+```
+#### 启动proxy客户端
+```
+go_proxy proxyclient -l :1080 --proxy :2080 --pem ./pem/client.pem --key ./pem/client.key
+```
