@@ -4,12 +4,11 @@ Copyright © 2025 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
-	"github.com/Li-giegie/go_proxy/interval"
+	"github.com/Li-giegie/go_proxy/internal"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
 
-// tlsserverCmd represents the proxyserver command
 var tlsserverCmd = &cobra.Command{
 	Use:   "tlsserver",
 	Short: "http/s proxy tls tunnel server",
@@ -19,12 +18,12 @@ var tlsserverCmd = &cobra.Command{
 		pem, _ := cmd.Flags().GetString("pem")
 		cpem, _ := cmd.Flags().GetString("cpem")
 		key, _ := cmd.Flags().GetString("key")
-		l, err := interval.NewTLSListen(addr, pem, key, cpem)
+		l, err := internal.NewTLSListen(addr, pem, key, cpem)
 		if err != nil {
 			logrus.Errorf("new tls listen err: %s", err)
 			return
 		}
-		if err = interval.StartProxy(l); err != nil {
+		if err = internal.StartProxy(l); err != nil {
 			logrus.Errorf("err: %s", err)
 		}
 	},

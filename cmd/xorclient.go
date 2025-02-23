@@ -4,12 +4,11 @@ Copyright © 2025 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
-	"github.com/Li-giegie/go_proxy/interval"
+	"github.com/Li-giegie/go_proxy/internal"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
 
-// xorclientCmd represents the xorclient command
 var xorclientCmd = &cobra.Command{
 	Use:   "xorclient",
 	Short: "http/s proxy XOR encryption tunnel client",
@@ -18,7 +17,7 @@ var xorclientCmd = &cobra.Command{
 		addr, _ := cmd.Flags().GetString("addr")
 		proxy, _ := cmd.Flags().GetString("proxy")
 		key, _ := cmd.Flags().GetString("key")
-		err := interval.StartForward(addr, &interval.XORForward{
+		err := internal.StartForward(addr, &internal.XORForward{
 			ProxyAddr: proxy,
 			Key:       []byte(key),
 		})

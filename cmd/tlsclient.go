@@ -4,7 +4,7 @@ Copyright © 2025 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
-	"github.com/Li-giegie/go_proxy/interval"
+	"github.com/Li-giegie/go_proxy/internal"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
@@ -19,7 +19,7 @@ var tlsclientCmd = &cobra.Command{
 		proxy, _ := cmd.Flags().GetString("proxy")
 		pem, _ := cmd.Flags().GetString("pem")
 		key, _ := cmd.Flags().GetString("key")
-		err := interval.StartForward(addr, &interval.TLSForward{
+		err := internal.StartForward(addr, &internal.TLSForward{
 			ProxyAddr: proxy,
 			Pem:       pem,
 			Key:       key,

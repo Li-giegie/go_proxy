@@ -4,7 +4,7 @@ Copyright © 2025 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
-	"github.com/Li-giegie/go_proxy/interval"
+	"github.com/Li-giegie/go_proxy/internal"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"net"
@@ -23,7 +23,7 @@ var serverCmd = &cobra.Command{
 			return
 		}
 		defer l.Close()
-		if err = interval.StartProxy(l); err != nil {
+		if err = internal.StartProxy(l); err != nil {
 			logrus.Errorf("err:%v", err)
 		}
 	},

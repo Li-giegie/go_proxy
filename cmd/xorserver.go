@@ -4,13 +4,12 @@ Copyright © 2025 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
-	"github.com/Li-giegie/go_proxy/interval"
+	"github.com/Li-giegie/go_proxy/internal"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"net"
 )
 
-// xorserverCmd represents the xorserver command
 var xorserverCmd = &cobra.Command{
 	Use:   "xorserver",
 	Short: "http/s proxy XOR encryption tunnel server",
@@ -23,7 +22,7 @@ var xorserverCmd = &cobra.Command{
 			logrus.Errorf("listen err: %v", err)
 			return
 		}
-		err = interval.StartProxy(&interval.XORProxy{
+		err = internal.StartProxy(&internal.XORProxy{
 			Key:      []byte(key),
 			Listener: l,
 		})
